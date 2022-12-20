@@ -45,7 +45,7 @@ class _HomeWidgetState extends State<HomeWidget> {
               label: 'Camera',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.browse_gallery),
+              icon: Icon(Icons.image_rounded),
               label: 'Gallery',
             ),
           ],
