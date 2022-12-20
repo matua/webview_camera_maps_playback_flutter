@@ -1,7 +1,13 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
+import 'camera_widget.dart';
+import 'gallery_widget.dart';
+
 class HomeWidget extends StatefulWidget {
-  const HomeWidget({Key? key}) : super(key: key);
+  final List<CameraDescription> cameras;
+
+  const HomeWidget({super.key, required this.cameras});
 
   @override
   State<HomeWidget> createState() => _HomeWidgetState();
@@ -9,14 +15,17 @@ class HomeWidget extends StatefulWidget {
 
 class _HomeWidgetState extends State<HomeWidget> {
   int _selectedIndex = 0;
+  static late List<CameraDescription> cameras;
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Home',
-    ),
-    Text(
-      'Index 1: Business',
-    ),
+  @override
+  void initState() {
+    super.initState();
+    cameras = widget.cameras;
+  }
+
+  static final List<Widget> _widgetOptions = <Widget>[
+    CameraWidget(cameras: cameras),
+    const GalleryWidget(),
   ];
 
   void _onItemTapped(int index) {
@@ -41,7 +50,8 @@ class _HomeWidgetState extends State<HomeWidget> {
             ),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: Colors.amber[800],
+          selectedItemColor: Colors.black,
+          unselectedItemColor: Colors.blueGrey[200],
           onTap: _onItemTapped,
         ),
         body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
