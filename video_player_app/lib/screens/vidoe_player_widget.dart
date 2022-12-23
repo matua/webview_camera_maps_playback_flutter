@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -11,6 +13,8 @@ class VideoPlayerWidget extends StatefulWidget {
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   late VideoPlayerController _controller;
+  bool _showControls = false;
+  late Timer _timer;
 
   @override
   void initState() {
@@ -18,78 +22,159 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
     _controller = VideoPlayerController.network(
       'https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_10mb.mp4',
-    )..initialize().then((_) {
+    )
+      ..initialize().then((_) {
         setState(() {});
-      });
+      })
+      ..play();
+
+    _startTimer();
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _timer.cancel();
     super.dispose();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        // The Text widget will be marked for rebuilding and will show the updated video position
+      });
+    });
+  }
+
+  void _toggleControls() {
+    setState(() {
+      _showControls = !_showControls;
+      if (_showControls) {
+        _timer = Timer(const Duration(seconds: 3), () {
+          setState(() {
+            _showControls = false;
+          });
+        });
+      } else {
+        _timer.cancel();
+      }
+    });
+  }
+
+  String getFormattedDuration(Duration duration) {
+    int hours = duration.inHours;
+    int minutes = duration.inMinutes % 60;
+    int seconds = duration.inSeconds % 60;
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  String getFormattedTime(Duration duration, Duration totalDuration) {
+    String elapsedTime = getFormattedDuration(duration);
+    String totalTime = getFormattedDuration(totalDuration);
+    return '$elapsedTime / $totalTime';
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            setState(() {
-              _controller.value.isPlaying ? _controller.pause() : _controller.play();
-            });
-          },
-          child: Icon(
-            _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-          ),
-        ),
-        body: Column(
-          children: [
-            SizedBox(
-              height: 300,
-              child: Column(
-                children: [
-                  SizedBox(
-                      height: (MediaQuery.of(context).size.width - 100) / 2.7,
-                      width: double.infinity - 300,
-                      child: VideoPlayer(_controller)),
-                  Expanded(
-                    child: Slider(
-                      value: _controller.value.position.inSeconds.toDouble(),
-                      onChanged: (newValue) {
-                        _controller.seekTo(Duration(seconds: newValue.round()));
-                      },
-                      min: 0,
-                      max: _controller.value.duration.inSeconds.toDouble(),
+      home: SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          body: GestureDetector(
+            onTap: _toggleControls,
+            onDoubleTap: _toggleControls,
+            child: Stack(
+              children: [
+                _controller.value.isInitialized
+                    ? Center(
+                        child: AspectRatio(
+                          aspectRatio: _controller.value.aspectRatio,
+                          child: VideoPlayer(_controller),
+                        ),
+                      )
+                    : const Center(child: CircularProgressIndicator()),
+                if (_showControls)
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          color: Colors.white,
+                          iconSize: 63,
+                          icon: const Icon(Icons.replay_10),
+                          onPressed: () {
+                            setState(() {
+                              _controller.seekTo(
+                                _controller.value.position - const Duration(seconds: 10),
+                              );
+                            });
+                          },
+                        ),
+                        IconButton(
+                          color: Colors.white,
+                          iconSize: 63,
+                          icon: _controller.value.isPlaying ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
+                          onPressed: () {
+                            setState(() {
+                              _controller.value.isPlaying ? _controller.pause() : _controller.play();
+                            });
+                          },
+                        ),
+                        IconButton(
+                          color: Colors.white,
+                          iconSize: 63,
+                          icon: const Icon(Icons.forward_10),
+                          onPressed: () {
+                            setState(() {
+                              _controller.seekTo(
+                                _controller.value.position + const Duration(seconds: 10),
+                              );
+                            });
+                          },
+                        ),
+                        IconButton(
+                          color: Colors.white,
+                          iconSize: 63,
+                          icon: const Icon(Icons.refresh),
+                          onPressed: () {
+                            setState(() {
+                              _controller.seekTo(
+                                const Duration(seconds: 0),
+                              );
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-            Row(
-              children: [
-                TextButton(
-                  onPressed: () {
-                    _controller.seekTo(
-                      _controller.value.position - const Duration(seconds: 10),
-                    );
-                  },
-                  child: const Text('Backward'),
+                Positioned(
+                  width: MediaQuery.of(context).size.width,
+                  bottom: 0,
+                  child: Slider(
+                    activeColor: Colors.orange,
+                    inactiveColor: Colors.amberAccent.shade100,
+                    value: _controller.value.position.inSeconds.toDouble(),
+                    onChanged: (newValue) {
+                      setState(() {
+                        _controller.seekTo(Duration(seconds: newValue.round()));
+                        // _controller.play();
+                      });
+                    },
+                    min: 0,
+                    max: _controller.value.duration.inSeconds.toDouble(),
+                  ),
                 ),
-                TextButton(
-                  onPressed: () {
-                    _controller.seekTo(
-                      _controller.value.position + const Duration(seconds: 10),
-                    );
-                  },
-                  child: const Text('Forward'),
+                Positioned(
+                  bottom: 0,
+                  right: 36,
+                  child: Text(
+                    style: const TextStyle(color: Colors.white),
+                    getFormattedTime(_controller.value.position, _controller.value.duration),
+                  ),
                 ),
               ],
             ),
-            Text(
-              '${_controller.value.position.inSeconds} seconds',
-            ),
-          ],
+          ),
         ),
       ),
     );
