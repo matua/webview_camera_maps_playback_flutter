@@ -15,6 +15,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   late VideoPlayerController _controller;
   bool _showControls = false;
   late Timer _timer;
+  late Timer _controlsTimer;
+  String _formattedTime = '';
 
   @override
   void initState() {
@@ -24,7 +26,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       'https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_10mb.mp4',
     )
       ..initialize().then((_) {
-        setState(() {});
+        setState(() {
+          _formattedTime = getFormattedTime(_controller.value.position, _controller.value.duration);
+        });
       })
       ..play();
 
@@ -35,13 +39,14 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   void dispose() {
     _controller.dispose();
     _timer.cancel();
+    _controlsTimer.cancel();
     super.dispose();
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _controlsTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        // The Text widget will be marked for rebuilding and will show the updated video position
+        _formattedTime = getFormattedTime(_controller.value.position, _controller.value.duration);
       });
     });
   }
@@ -157,7 +162,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                     onChanged: (newValue) {
                       setState(() {
                         _controller.seekTo(Duration(seconds: newValue.round()));
-                        // _controller.play();
                       });
                     },
                     min: 0,
@@ -169,7 +173,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                   right: 36,
                   child: Text(
                     style: const TextStyle(color: Colors.white),
-                    getFormattedTime(_controller.value.position, _controller.value.duration),
+                    _formattedTime,
                   ),
                 ),
               ],
