@@ -1,5 +1,10 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import 'button_widget.dart';
 
 class MapsWidget extends StatefulWidget {
   const MapsWidget({super.key});
@@ -9,75 +14,53 @@ class MapsWidget extends StatefulWidget {
 }
 
 class MapsWidgetState extends State<MapsWidget> {
-  late GoogleMapController mapController;
+  final double lat = 57.161297;
+  final double lng = 65.525017;
+  final double zoom = 11;
+  late final Timer timer;
+  late CameraPosition center;
+  GoogleMapController? googleMapController;
 
-  LatLng _center = const LatLng(57.161297, 65.525017);
-
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
+  @override
+  void initState() {
+    super.initState();
+    center = CameraPosition(
+      target: LatLng(lat, lng),
+      zoom: zoom,
+    );
+    googleMapController = null;
   }
 
   @override
   Widget build(BuildContext context) {
     return Stack(children: <Widget>[
       GoogleMap(
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(
-          target: _center,
-          zoom: 11.0,
-        ),
+        initialCameraPosition: center,
+        onMapCreated: (GoogleMapController controller) {
+          setState(() {
+            googleMapController = controller;
+          });
+        },
       ),
       Positioned(
         bottom: 5,
         left: 5,
         child: Container(
-          decoration:
-              BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.all(Radius.circular(5))),
+          decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.3), borderRadius: const BorderRadius.all(Radius.circular(5))),
           height: 150,
           width: 150,
           child: Column(
             children: [
-              Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.8), borderRadius: BorderRadius.all(Radius.circular(5))),
-                  child: IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.arrow_upward,
-                        color: Colors.grey,
-                      ))),
+              ButtonWidget(lat: 0, lng: -10, icon: const Icon(Icons.arrow_upward), controller: googleMapController),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.8), borderRadius: BorderRadius.all(Radius.circular(5))),
-                      child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.arrow_back,
-                            color: Colors.grey,
-                          ))),
-                  Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.8), borderRadius: BorderRadius.all(Radius.circular(5))),
-                      child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.arrow_forward,
-                            color: Colors.grey,
-                          ))),
+                  ButtonWidget(lat: -10, lng: 0, icon: const Icon(Icons.arrow_back), controller: googleMapController),
+                  ButtonWidget(lat: 10, lng: 0, icon: const Icon(Icons.arrow_forward), controller: googleMapController),
                 ],
               ),
-              Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.8), borderRadius: BorderRadius.all(Radius.circular(5))),
-                  child: IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.arrow_downward,
-                        color: Colors.grey,
-                      ))),
+              ButtonWidget(lat: 0, lng: 10, icon: const Icon(Icons.arrow_downward), controller: googleMapController),
             ],
           ),
         ),
@@ -85,16 +68,3 @@ class MapsWidgetState extends State<MapsWidget> {
     ]);
   }
 }
-//
-// void moveLeft(GoogleMapController controller, LatLng center) async {
-//   final currentScreenCoordinates = await controller.getScreenCoordinate(center);
-//   final currentPosition = controller.getLatLng(currentScreenCoordinates);
-//   controller.moveCamera(
-//     CameraUpdate.newLatLng(
-//       LatLng(
-//         currentPosition. + _moveStep,
-//         currentPosition.target.longitude,
-//       ),
-//     ),
-//   );
-// }
