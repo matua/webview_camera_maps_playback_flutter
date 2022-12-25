@@ -16,7 +16,7 @@ class MapsWidget extends StatefulWidget {
 class MapsWidgetState extends State<MapsWidget> {
   final double lat = 57.161297;
   final double lng = 65.525017;
-  final double zoom = 11;
+  double zoom = 11;
   late final Timer timer;
   late CameraPosition center;
   GoogleMapController? googleMapController;
@@ -68,6 +68,25 @@ class MapsWidgetState extends State<MapsWidget> {
               ButtonWidget(lat: 0, lng: 10, icon: const Icon(Icons.arrow_downward), controller: googleMapController),
             ],
           ),
+        ),
+      ),
+      Positioned(
+        top: 50,
+        // left: MediaQuery.of(context).size.width / 2,
+        width: MediaQuery.of(context).size.width,
+        child: Slider(
+          activeColor: Colors.black,
+          inactiveColor: Colors.black54,
+          thumbColor: Colors.orange,
+          min: 0,
+          max: 25,
+          value: zoom,
+          onChanged: (newZoom) {
+            setState(() {
+              zoom = newZoom;
+            });
+            googleMapController?.animateCamera(CameraUpdate.zoomTo(zoom));
+          },
         ),
       ),
     ]);
