@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:webviewx/webviewx.dart';
 
+import '../utility.dart';
+
 class BrowserPage extends StatefulWidget {
   const BrowserPage({Key? key}) : super(key: key);
 
@@ -12,16 +14,24 @@ class _BrowserPageState extends State<BrowserPage> {
   TextEditingController textEditingController = TextEditingController();
   late WebViewXController<dynamic> webViewController;
   bool isLoading = true;
+  bool canGoBack = false;
+  bool canGoForward = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_back)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_forward)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.home)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.history)),
+          IconButton(
+              onPressed: canGoBack ? () => webViewController.goBack() : null,
+              icon: const Icon(Icons.arrow_back),
+              disabledColor: Colors.blue),
+          IconButton(
+              onPressed: canGoForward ? () => webViewController.goForward() : null,
+              icon: const Icon(Icons.arrow_forward),
+              disabledColor: Colors.blue),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.home), disabledColor: Colors.blue),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.history), disabledColor: Colors.blue),
         ],
       ),
       drawer: const Drawer(),
@@ -49,11 +59,21 @@ class _BrowserPageState extends State<BrowserPage> {
                       ),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(right: 10),
-                    child: Icon(
-                      Icons.cached_sharp,
-                      color: Colors.grey,
+                  GestureDetector(
+                    onTap: () {
+                      webViewController.loadContent(formatUrl(textEditingController.text), SourceType.urlBypass);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: isLoading
+                          ? const Icon(
+                              Icons.close,
+                              color: Colors.grey,
+                            )
+                          : const Icon(
+                              Icons.cached_sharp,
+                              color: Colors.grey,
+                            ),
                     ),
                   ),
                 ],
@@ -75,6 +95,12 @@ class _BrowserPageState extends State<BrowserPage> {
                   onPageStarted: (String src) {
                     setState(() {
                       isLoading = true;
+                      webViewController.canGoForward().then((value) {
+                        canGoForward = value;
+                      });
+                      webViewController.canGoBack().then((value) {
+                        canGoBack = value;
+                      });
                     });
                   },
                 ),
