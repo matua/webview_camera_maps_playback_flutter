@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:map_app/views/home_button_widget.dart';
 
 import 'button_widget.dart';
 
@@ -57,6 +57,11 @@ class MapsWidgetState extends State<MapsWidget> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ButtonWidget(lat: -10, lng: 0, icon: const Icon(Icons.arrow_back), controller: googleMapController),
+                  HomeButtonWidget(
+                    icon: const Icon(Icons.home),
+                    controller: googleMapController,
+                    home: center,
+                  ),
                   ButtonWidget(lat: 10, lng: 0, icon: const Icon(Icons.arrow_forward), controller: googleMapController),
                 ],
               ),
