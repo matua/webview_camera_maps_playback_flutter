@@ -18,18 +18,22 @@ class ButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //   Timer timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
-    //     controller?.moveCamera(
-    //       CameraUpdate.scrollBy(lat, lng),
-    //     );
-    //   });
+    Timer? timer;
+
     return GestureDetector(
-      // onLongPress: () {
-      //   timer;
-      // },
-      // onLongPressUp: () {
-      //   timer.cancel();
-      // },
+      onLongPress: () {
+        timer = Timer.periodic(
+          const Duration(milliseconds: 100),
+          (t) {
+            controller?.moveCamera(
+              CameraUpdate.scrollBy(lat, lng),
+            );
+          },
+        );
+      },
+      onLongPressEnd: (_) {
+        timer?.cancel();
+      },
       child: Container(
           decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.8), borderRadius: const BorderRadius.all(Radius.circular(5))),
