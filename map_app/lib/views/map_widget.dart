@@ -11,7 +11,7 @@ class MapsWidget extends StatefulWidget {
 class MapsWidgetState extends State<MapsWidget> {
   late GoogleMapController mapController;
 
-  final LatLng _center = const LatLng(45.521563, -122.677433);
+  LatLng _center = const LatLng(57.161297, 65.525017);
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -19,13 +19,82 @@ class MapsWidgetState extends State<MapsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return GoogleMap(
-      mapType: MapType.hybrid,
-      onMapCreated: _onMapCreated,
-      initialCameraPosition: CameraPosition(
-        target: _center,
-        zoom: 1.0,
+    return Stack(children: <Widget>[
+      GoogleMap(
+        onMapCreated: _onMapCreated,
+        initialCameraPosition: CameraPosition(
+          target: _center,
+          zoom: 11.0,
+        ),
       ),
-    );
+      Positioned(
+        bottom: 5,
+        left: 5,
+        child: Container(
+          decoration:
+              BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.all(Radius.circular(5))),
+          height: 150,
+          width: 150,
+          child: Column(
+            children: [
+              Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.8), borderRadius: BorderRadius.all(Radius.circular(5))),
+                  child: IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.arrow_upward,
+                        color: Colors.grey,
+                      ))),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.8), borderRadius: BorderRadius.all(Radius.circular(5))),
+                      child: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.grey,
+                          ))),
+                  Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.8), borderRadius: BorderRadius.all(Radius.circular(5))),
+                      child: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.arrow_forward,
+                            color: Colors.grey,
+                          ))),
+                ],
+              ),
+              Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.8), borderRadius: BorderRadius.all(Radius.circular(5))),
+                  child: IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.arrow_downward,
+                        color: Colors.grey,
+                      ))),
+            ],
+          ),
+        ),
+      ),
+    ]);
   }
 }
+//
+// void moveLeft(GoogleMapController controller, LatLng center) async {
+//   final currentScreenCoordinates = await controller.getScreenCoordinate(center);
+//   final currentPosition = controller.getLatLng(currentScreenCoordinates);
+//   controller.moveCamera(
+//     CameraUpdate.newLatLng(
+//       LatLng(
+//         currentPosition. + _moveStep,
+//         currentPosition.target.longitude,
+//       ),
+//     ),
+//   );
+// }

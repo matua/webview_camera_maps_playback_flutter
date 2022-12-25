@@ -18,7 +18,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MapsWidget(),
+      home: const Scaffold(
+        body: MapsWidget(),
+      ),
     );
   }
 }
