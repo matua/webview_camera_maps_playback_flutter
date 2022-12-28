@@ -1,29 +1,30 @@
+import 'package:browser_app/business/favorites_state.dart';
+import 'package:browser_app/business/url_history_state.dart';
+import 'package:browser_app/views/history_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 import 'package:webviewx/webviewx.dart';
 
-import '../data/model/favoriteUrlsList.dart';
 import '../utility.dart';
 
-class BrowserPage extends ConsumerStatefulWidget {
+class BrowserPage extends StatefulWidget {
   const BrowserPage({Key? key}) : super(key: key);
 
   @override
-  ConsumerState createState() => _BrowserPageState();
+  State createState() => _BrowserPageState();
 }
 
-class _BrowserPageState extends ConsumerState<BrowserPage> {
+class _BrowserPageState extends State<BrowserPage> {
   TextEditingController textEditingController = TextEditingController();
   late WebViewXController<dynamic> webViewController;
   bool isLoading = true;
   bool canGoBack = false;
   bool canGoForward = false;
-  bool isAmber = true;
   String currentUrl = '';
 
   @override
   Widget build(BuildContext context) {
-    List<String> favoriteUrlsList = ref.watch(favoriteUrlsProvider.notifier).list;
+    List<String> favoriteUrlsList = context.watch<FavoritesState>().urls;
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -35,34 +36,91 @@ class _BrowserPageState extends ConsumerState<BrowserPage> {
               onPressed: canGoForward ? () => webViewController.goForward() : null,
               icon: const Icon(Icons.arrow_forward),
               disabledColor: Colors.blue),
-          InkWell(
-              onTap: () {
-                setState(() {
-                  isAmber = !isAmber; // Toggle the value of the boolean
-                });
-              },
-              child: IconButton(
-                onPressed: () {
-                  if (favoriteUrlsList.contains(currentUrl)) {
-                    ref.read(favoriteUrlsProvider.notifier).removeFromList(currentUrl);
-                  } else {
-                    ref.read(favoriteUrlsProvider.notifier).addToList(currentUrl);
-                  }
-                  print(favoriteUrlsList);
-                },
-                icon: const Icon(Icons.star),
-                color: isAmber ? Colors.amber : Colors.white,
-              )),
+          IconButton(
+            onPressed: () {
+              if (favoriteUrlsList.contains(currentUrl)) {
+                context.read<FavoritesState>().removeUrl(currentUrl);
+                print('Removed $currentUrl from favorites');
+              } else {
+                context.read<FavoritesState>().addUrl(currentUrl);
+                print('Added $currentUrl to favorites');
+              }
+            },
+            icon: const Icon(Icons.star),
+            color: context.watch<FavoritesState>().urls.contains(currentUrl) ? Colors.amber : Colors.white,
+          ),
           IconButton(onPressed: () {}, icon: const Icon(Icons.home), disabledColor: Colors.blue),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.history), disabledColor: Colors.blue),
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        HistoryPage(textEditingController: textEditingController, webViewController: webViewController),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.history),
+              disabledColor: Colors.blue),
         ],
       ),
       drawer: Drawer(
+        backgroundColor: Colors.grey.shade300,
         child: favoriteUrlsList.isEmpty
-            ? const Center(child: Text('No URLs added yet'))
-            : ListView.builder(
-                itemCount: favoriteUrlsList.length,
-                itemBuilder: (context, index) => SizedBox(height: 25, child: Text(favoriteUrlsList[index])),
+            ? Column(
+                children: const [
+                  Padding(
+                    padding: EdgeInsets.only(top: 30),
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                        size: 30,
+                      ),
+                      title: Text(
+                        'My Favorites',
+                        style: TextStyle(fontSize: 27, color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                  Expanded(child: Center(child: Text('No favorites yet 😉'))),
+                ],
+              )
+            : Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 30),
+                  child: Column(
+                    children: [
+                      const ListTile(
+                        leading: Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                          size: 30,
+                        ),
+                        title: Text(
+                          'My Favorites',
+                          style: TextStyle(fontSize: 27, color: Colors.grey),
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: favoriteUrlsList.length,
+                          itemBuilder: (context, index) {
+                            var url = favoriteUrlsList[index];
+                            return ListTile(
+                                selectedColor: Colors.orange,
+                                leading: const Icon(Icons.arrow_forward_ios_outlined),
+                                title: Text(url.length > 50 ? '${url.substring(0, 50)}...' : url),
+                                onTap: () {
+                                  webViewController.loadContent(formatUrl(url), SourceType.urlBypass);
+                                  Scaffold.of(context).closeDrawer();
+                                  textEditingController.text = url;
+                                });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
       ),
       body: Padding(
@@ -123,12 +181,10 @@ class _BrowserPageState extends ConsumerState<BrowserPage> {
                   onPageFinished: (String src) {
                     setState(() {
                       isLoading = false;
+                      webViewController.evalRawJavascript('document.baseURI').then((url) => currentUrl = url);
                     });
                   },
                   onPageStarted: (String src) {
-                    webViewController
-                        .evalRawJavascript('window.location.href')
-                        .then((url) => currentUrl = url.substring(1, url.length - 1));
                     setState(() {
                       isLoading = true;
                       webViewController.canGoForward().then((value) {
@@ -137,6 +193,8 @@ class _BrowserPageState extends ConsumerState<BrowserPage> {
                       webViewController.canGoBack().then((value) {
                         canGoBack = value;
                       });
+                      context.read<UrlHistoryState>().addUrl(currentUrl);
+                      print('Added $currentUrl to history');
                     });
                   },
                 ),

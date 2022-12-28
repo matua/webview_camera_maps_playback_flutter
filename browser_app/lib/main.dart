@@ -1,10 +1,19 @@
+import 'package:browser_app/business/favorites_state.dart';
+import 'package:browser_app/business/url_history_state.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 
 import 'views/browser_page.dart';
 
 void main() {
-  runApp(const ProviderScope(child: BrowserApp()));
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider<UrlHistoryState>(
+      create: (context) => UrlHistoryState(),
+    ),
+    ChangeNotifierProvider<FavoritesState>(
+      create: (context) => FavoritesState(),
+    ),
+  ], child: const BrowserApp()));
 }
 
 class BrowserApp extends StatelessWidget {
