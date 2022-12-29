@@ -9,7 +9,9 @@ class FavoritesState extends ChangeNotifier {
     if (urls.contains(url)) {
       throw Exception("URL is already in the list. Only one is allowed.");
     }
-    _urls = [url, ..._urls];
+    if (url.isNotEmpty) {
+      _urls = [url, ..._urls];
+    }
     notifyListeners();
   }
 

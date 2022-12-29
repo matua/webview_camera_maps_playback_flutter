@@ -6,10 +6,9 @@ class UrlHistoryState extends ChangeNotifier {
   List<String> get urls => _urls;
 
   void addUrl(String url) {
-    if (urls.contains(url)) {
-      throw Exception("URL is already in the list. Only one is allowed.");
+    if (url.isNotEmpty) {
+      _urls = [url, ..._urls];
     }
-    _urls = [url, ..._urls];
     notifyListeners();
   }
 
