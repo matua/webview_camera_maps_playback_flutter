@@ -26,8 +26,8 @@ class HistoryPage extends StatelessWidget {
             title: Text(url.length > 50 ? '${url.substring(0, 50)}...' : url),
             onTap: () {
               webViewController.loadRequest(Uri.parse(formatUrl(url)));
-              Scaffold.of(context).closeDrawer();
               textEditingController.text = url;
+              Navigator.of(context).pop();
             },
           );
         },
