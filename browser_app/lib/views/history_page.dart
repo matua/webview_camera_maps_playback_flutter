@@ -13,7 +13,6 @@ class HistoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<String> historyUrlsList = context.watch<UrlHistoryState>().urls;
-    print(historyUrlsList);
     return Scaffold(
       appBar: AppBar(title: const Text('Browser History')),
       body: ListView.builder(

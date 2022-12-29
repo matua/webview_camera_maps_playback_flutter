@@ -6,13 +6,9 @@ String formatUrl(String text) {
 }
 
 bool isUrl(String url) {
-  final RegExp urlPattern = RegExp(r'^(?:http|ftp)s?://' // Scheme
-      r'(?:[^@\n]+?@)?' // User
-      r'(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}|' // Domain
-      r'localhost|' // Localhost
-      r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' // IP
-      r'(?::\d+)?' // Port
-      r'(?:/[^\s]*)?$'); // Path
+  final RegExp urlPattern = RegExp(r'(?:[a-zA-Z][a-zA-Z\d+.-]*)'
+      r'(?:\:[\d]+)?'
+      r'(?:/[^\s]*)?$');
   return urlPattern.hasMatch(url);
 }
 

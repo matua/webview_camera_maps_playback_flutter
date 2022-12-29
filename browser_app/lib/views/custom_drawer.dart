@@ -35,41 +35,39 @@ class CustomDrawer extends StatelessWidget {
                 Expanded(child: Center(child: Text('No favorites yet 😉'))),
               ],
             )
-          : Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 30),
-                child: Column(
-                  children: [
-                    const ListTile(
-                      leading: Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                        size: 30,
-                      ),
-                      title: Text(
-                        'My Favorites',
-                        style: TextStyle(fontSize: 27, color: Colors.grey),
-                      ),
+          : Padding(
+              padding: const EdgeInsets.only(top: 30),
+              child: Column(
+                children: [
+                  const ListTile(
+                    leading: Icon(
+                      Icons.star,
+                      color: Colors.amber,
+                      size: 30,
                     ),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: favoriteUrlsList.length,
-                        itemBuilder: (context, index) {
-                          var url = favoriteUrlsList[index];
-                          return ListTile(
-                              selectedColor: Colors.orange,
-                              leading: const Icon(Icons.arrow_forward_ios_outlined),
-                              title: Text(url.length > 50 ? '${url.substring(0, 50)}...' : url),
-                              onTap: () {
-                                webViewController.loadRequest(Uri.parse(formatUrl(url)));
-                                Scaffold.of(context).closeDrawer();
-                                textEditingController.text = url;
-                              });
-                        },
-                      ),
+                    title: Text(
+                      'My Favorites',
+                      style: TextStyle(fontSize: 27, color: Colors.grey),
                     ),
-                  ],
-                ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: favoriteUrlsList.length,
+                      itemBuilder: (context, index) {
+                        var url = favoriteUrlsList[index];
+                        return ListTile(
+                            selectedColor: Colors.orange,
+                            leading: const Icon(Icons.arrow_forward_ios_outlined),
+                            title: Text(url.length > 50 ? '${url.substring(0, 50)}...' : url),
+                            onTap: () {
+                              webViewController.loadRequest(Uri.parse(formatUrl(url)));
+                              Scaffold.of(context).closeDrawer();
+                              textEditingController.text = url;
+                            });
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
     );

@@ -5,7 +5,6 @@ class ImageRepository {
 
   addImage(XFile image) {
     _images.add(image.path);
-    print('Path is ${image.path}');
   }
 
   List<String> get images => _images;

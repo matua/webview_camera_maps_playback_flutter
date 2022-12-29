@@ -53,14 +53,12 @@ class _BrowserPageState extends State<BrowserPage> {
             webViewController.currentUrl().then((url) => textEditingController.text = url!);
           });
           context.read<UrlHistoryState>().addUrl(_currentUrl);
-          print('Added $_currentUrl to history');
         },
         onPageFinished: (String src) {
           setState(() {
             _isLoading = false;
             webViewController.currentUrl().then((url) => _currentUrl = url.toString());
           });
-          print(_currentUrl);
         },
         onWebResourceError: (WebResourceError error) {
           setState(() {
