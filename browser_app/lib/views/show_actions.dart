@@ -14,7 +14,7 @@ List<Widget> showActions(
     required bool canGoForward,
     required String currentUrl,
     required String homeUrl}) {
-  return [
+  return <Widget>[
     IconButton(
         onPressed: canGoBack ? () => webViewController.goBack() : null,
         icon: const Icon(Icons.arrow_back),

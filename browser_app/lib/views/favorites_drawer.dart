@@ -40,7 +40,7 @@ class FavoritesDrawer extends StatelessWidget {
           : Padding(
               padding: const EdgeInsets.only(top: 30),
               child: Column(
-                children: [
+                children: <Widget>[
                   const ListTile(
                     leading: Icon(
                       Icons.star,
@@ -56,7 +56,7 @@ class FavoritesDrawer extends StatelessWidget {
                     child: ListView.builder(
                       itemCount: favoriteUrlsList.length,
                       itemBuilder: (BuildContext context, int index) {
-                        String url = favoriteUrlsList[index];
+                        final String url = favoriteUrlsList[index];
                         return ListTile(
                             selectedColor: Colors.orange,
                             leading: const Icon(Icons.arrow_forward_ios_outlined),

@@ -9,7 +9,7 @@ class ErrorPageWidget extends StatelessWidget {
     return Visibility(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        children: <Widget>[
           const Text(
             'Error loading page',
             style: TextStyle(fontSize: 30, color: Colors.black12, fontWeight: FontWeight.bold),

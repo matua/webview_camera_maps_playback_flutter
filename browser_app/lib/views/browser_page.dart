@@ -94,7 +94,7 @@ class _BrowserPageState extends State<BrowserPage> {
           favoriteUrlsList: favoriteUrlsList),
       body: Padding(
         padding: const EdgeInsets.all(10),
-        child: Column(children: [
+        child: Column(children: <Widget>[
           LinearProgressIndicator(
             value: _progressIndicatorValue != null ? _progressIndicatorValue! / 100 : 1,
             minHeight: 10,

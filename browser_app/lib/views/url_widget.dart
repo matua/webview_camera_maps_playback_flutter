@@ -15,12 +15,12 @@ class UrlWidget extends StatelessWidget {
     bool isLoading = Provider.of<PageStatusPage>(context).isLoading;
 
     return Row(
-      children: [
+      children: <Widget>[
         Expanded(
           child: Padding(
             padding: const EdgeInsets.only(left: 10),
             child: TextField(
-              onSubmitted: (value) {
+              onSubmitted: (String value) {
                 webViewController.loadRequest(Uri.parse(googleSearch(value)));
               },
               keyboardAppearance: Brightness.dark,

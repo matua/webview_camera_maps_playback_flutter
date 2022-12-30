@@ -1,8 +1,8 @@
-import 'package:browser_app/business/url_history_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../business/url_history_state.dart';
 import '../utility.dart';
 
 class HistoryPage extends StatelessWidget {

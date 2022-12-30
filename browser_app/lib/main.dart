@@ -7,7 +7,7 @@ import 'business/url_history_state.dart';
 import 'views/browser_page.dart';
 
 void main() {
-  runApp(MultiProvider(providers: [
+  runApp(MultiProvider(providers: <ChangeNotifierProvider<dynamic>>[
     ChangeNotifierProvider<UrlHistoryState>(
       create: (BuildContext context) => UrlHistoryState(),
     ),
