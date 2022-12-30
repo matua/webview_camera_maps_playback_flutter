@@ -5,7 +5,6 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../business/favorites_state.dart';
 import '../business/page_status_state.dart';
 import '../business/url_history_state.dart';
-import 'error_page_widget.dart';
 import 'favorites_drawer.dart';
 import 'show_actions.dart';
 import 'url_widget.dart';
@@ -36,13 +35,14 @@ class _BrowserPageState extends State<BrowserPage> {
         NavigationDelegate(
           onProgress: (int progress) {
             setState(() {
-              if (Provider.of<PageStatusPage>(context, listen: false).status == PageStatus.correct) {
-                _progressIndicatorValue = progress;
-              }
+              _progressIndicatorValue = progress;
             });
           },
           onPageStarted: (String src) {
             setState(() {
+              _error = null;
+              Provider.of<PageStatusPage>(context, listen: false).setLoadingStatus(true);
+              Provider.of<UrlHistoryState>(context, listen: false).addUrl(_currentUrl);
               webViewController.canGoForward().then((bool value) {
                 _canGoForward = value;
               });
@@ -51,9 +51,6 @@ class _BrowserPageState extends State<BrowserPage> {
               });
               webViewController.currentUrl().then((String? url) => textEditingController.text = url!);
             });
-            Provider.of<PageStatusPage>(context, listen: false).setLoadingStatus(true);
-            Provider.of<PageStatusPage>(context, listen: false).setErrorStatus(PageStatus.correct);
-            Provider.of<UrlHistoryState>(context, listen: false).addUrl(_currentUrl);
           },
           onPageFinished: (String src) {
             setState(() {
@@ -62,7 +59,6 @@ class _BrowserPageState extends State<BrowserPage> {
             });
           },
           onWebResourceError: (WebResourceError error) {
-            Provider.of<PageStatusPage>(context, listen: false).setErrorStatus(PageStatus.error);
             setState(() {
               _error = error;
             });
@@ -107,14 +103,7 @@ class _BrowserPageState extends State<BrowserPage> {
             height: 72,
             child: UrlWidget(textEditingController: textEditingController, webViewController: webViewController),
           ),
-          if (_error?.errorType != null && _error?.errorCode != null)
-            Expanded(
-              child: ErrorPageWidget(
-                error: _error,
-              ),
-            )
-          else
-            Expanded(child: WebViewWidget(controller: webViewController)),
+          Expanded(child: WebViewWidget(controller: webViewController)),
         ]),
       ),
     );

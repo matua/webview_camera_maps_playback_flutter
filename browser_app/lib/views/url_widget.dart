@@ -37,7 +37,6 @@ class UrlWidget extends StatelessWidget {
               webViewController.loadRequest(Uri.parse(googleSearch(textEditingController.text)));
             } else {
               webViewController.runJavaScript('window.stop();');
-              Provider.of<PageStatusPage>(context, listen: false).setErrorStatus(PageStatus.error);
               isLoading = false;
             }
           },
