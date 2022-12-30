@@ -12,7 +12,8 @@ class HistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> historyUrlsList = context.watch<UrlHistoryState>().urls;
+    final List<String> historyUrlsList = Provider.of<UrlHistoryState>(context).urls;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Browser History')),
       body: ListView.builder(
@@ -21,7 +22,7 @@ class HistoryPage extends StatelessWidget {
           var url = historyUrlsList[index];
           return ListTile(
             selectedColor: Colors.orange,
-            leading: const Icon(Icons.arrow_forward_ios_outlined),
+            leading: const Icon(Icons.history),
             title: Text(url.length > 50 ? '${url.substring(0, 50)}...' : url),
             onTap: () {
               webViewController.loadRequest(Uri.parse(formatUrl(url)));

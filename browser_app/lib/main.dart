@@ -1,4 +1,5 @@
 import 'package:browser_app/business/favorites_state.dart';
+import 'package:browser_app/business/page_status_state.dart';
 import 'package:browser_app/business/url_history_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +14,9 @@ void main() {
     ChangeNotifierProvider<FavoritesState>(
       create: (context) => FavoritesState(),
     ),
+    ChangeNotifierProvider<PageStatusPage>(
+      create: (context) => PageStatusPage(),
+    ),
   ], child: const BrowserApp()));
 }
 
@@ -26,7 +30,7 @@ class BrowserApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Browser App',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
       ),
       home: const BrowserPage(),
     );

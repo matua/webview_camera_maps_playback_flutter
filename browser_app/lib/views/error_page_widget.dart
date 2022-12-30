@@ -6,12 +6,23 @@ class ErrorPageWidget extends StatelessWidget {
   final WebResourceError? error;
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text('''
-        Your page could not be loaded due to: ${error?.description}, error code: ${error?.errorCode}, error type: ${error?.errorType}
-        '''),
+    return Visibility(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'Error loading page',
+            style: TextStyle(fontSize: 30, color: Colors.black12, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(
+            height: 21,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: Text(
+                'Your page could not be loaded due to: ${error?.description}, error code: ${error?.errorCode}, error type: ${error?.errorType ?? 'unknown'}'),
+          ),
+        ],
       ),
     );
   }

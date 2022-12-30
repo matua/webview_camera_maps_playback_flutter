@@ -3,8 +3,8 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../utility.dart';
 
-class CustomDrawer extends StatelessWidget {
-  const CustomDrawer(
+class FavoritesDrawer extends StatelessWidget {
+  const FavoritesDrawer(
       {Key? key, required this.webViewController, required this.favoriteUrlsList, required this.textEditingController})
       : super(key: key);
   final WebViewController webViewController;
