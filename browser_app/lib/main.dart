@@ -1,21 +1,21 @@
-import 'package:browser_app/business/favorites_state.dart';
-import 'package:browser_app/business/page_status_state.dart';
-import 'package:browser_app/business/url_history_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'business/favorites_state.dart';
+import 'business/page_status_state.dart';
+import 'business/url_history_state.dart';
 import 'views/browser_page.dart';
 
 void main() {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider<UrlHistoryState>(
-      create: (context) => UrlHistoryState(),
+      create: (BuildContext context) => UrlHistoryState(),
     ),
     ChangeNotifierProvider<FavoritesState>(
-      create: (context) => FavoritesState(),
+      create: (BuildContext context) => FavoritesState(),
     ),
     ChangeNotifierProvider<PageStatusPage>(
-      create: (context) => PageStatusPage(),
+      create: (BuildContext context) => PageStatusPage(),
     ),
   ], child: const BrowserApp()));
 }

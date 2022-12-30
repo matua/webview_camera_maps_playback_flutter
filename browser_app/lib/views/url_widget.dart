@@ -6,7 +6,7 @@ import '../business/page_status_state.dart';
 import '../utility.dart';
 
 class UrlWidget extends StatelessWidget {
-  const UrlWidget({Key? key, required this.webViewController, required this.textEditingController}) : super(key: key);
+  const UrlWidget({super.key, required this.webViewController, required this.textEditingController});
   final WebViewController webViewController;
   final TextEditingController textEditingController;
 
@@ -43,7 +43,7 @@ class UrlWidget extends StatelessWidget {
           },
           child: Padding(
             padding: const EdgeInsets.only(right: 10),
-            child: (isLoading)
+            child: isLoading
                 ? const Icon(
                     Icons.close,
                     color: Colors.grey,

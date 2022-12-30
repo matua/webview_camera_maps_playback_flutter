@@ -6,7 +6,6 @@ class PageStatusPage extends ChangeNotifier {
 
   void setErrorStatus(PageStatus status) {
     status = status;
-    print('PAGE STATUS: $status');
     notifyListeners();
   }
 

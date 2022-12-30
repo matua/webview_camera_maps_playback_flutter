@@ -5,8 +5,10 @@ import '../utility.dart';
 
 class FavoritesDrawer extends StatelessWidget {
   const FavoritesDrawer(
-      {Key? key, required this.webViewController, required this.favoriteUrlsList, required this.textEditingController})
-      : super(key: key);
+      {super.key,
+      required this.webViewController,
+      required this.favoriteUrlsList,
+      required this.textEditingController});
   final WebViewController webViewController;
   final List<String> favoriteUrlsList;
   final TextEditingController textEditingController;
@@ -17,7 +19,7 @@ class FavoritesDrawer extends StatelessWidget {
       backgroundColor: Colors.grey.shade300,
       child: favoriteUrlsList.isEmpty
           ? Column(
-              children: const [
+              children: const <Widget>[
                 Padding(
                   padding: EdgeInsets.only(top: 30),
                   child: ListTile(
@@ -53,8 +55,8 @@ class FavoritesDrawer extends StatelessWidget {
                   Expanded(
                     child: ListView.builder(
                       itemCount: favoriteUrlsList.length,
-                      itemBuilder: (context, index) {
-                        var url = favoriteUrlsList[index];
+                      itemBuilder: (BuildContext context, int index) {
+                        String url = favoriteUrlsList[index];
                         return ListTile(
                             selectedColor: Colors.orange,
                             leading: const Icon(Icons.arrow_forward_ios_outlined),

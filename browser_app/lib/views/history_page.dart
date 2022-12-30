@@ -6,7 +6,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../utility.dart';
 
 class HistoryPage extends StatelessWidget {
-  const HistoryPage({required this.textEditingController, Key? key, required this.webViewController}) : super(key: key);
+  const HistoryPage({required this.textEditingController, super.key, required this.webViewController});
   final WebViewController webViewController;
   final TextEditingController textEditingController;
 
@@ -18,8 +18,8 @@ class HistoryPage extends StatelessWidget {
       appBar: AppBar(title: const Text('Browser History')),
       body: ListView.builder(
         itemCount: historyUrlsList.length,
-        itemBuilder: (context, index) {
-          var url = historyUrlsList[index];
+        itemBuilder: (BuildContext context, int index) {
+          final String url = historyUrlsList[index];
           return ListTile(
             selectedColor: Colors.orange,
             leading: const Icon(Icons.history),

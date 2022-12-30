@@ -7,7 +7,7 @@ class FavoritesState extends ChangeNotifier {
 
   void addUrl(String url) {
     if (urls.contains(url)) {
-      throw Exception("URL is already in the list. Only one is allowed.");
+      throw Exception('URL is already in the list. Only one is allowed.');
     }
     if (url.isNotEmpty) {
       _urls = [url, ..._urls];
@@ -16,7 +16,7 @@ class FavoritesState extends ChangeNotifier {
   }
 
   void removeUrl(String url) {
-    _urls.removeWhere((element) => element == url);
+    _urls.removeWhere((String element) => element == url);
     notifyListeners();
   }
 

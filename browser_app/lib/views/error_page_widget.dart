@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class ErrorPageWidget extends StatelessWidget {
-  const ErrorPageWidget({Key? key, required this.error}) : super(key: key);
+  const ErrorPageWidget({super.key, required this.error});
   final WebResourceError? error;
   @override
   Widget build(BuildContext context) {

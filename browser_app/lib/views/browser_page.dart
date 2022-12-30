@@ -1,17 +1,17 @@
-import 'package:browser_app/business/favorites_state.dart';
-import 'package:browser_app/business/url_history_state.dart';
-import 'package:browser_app/views/favorites_drawer.dart';
-import 'package:browser_app/views/history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../business/favorites_state.dart';
 import '../business/page_status_state.dart';
+import '../business/url_history_state.dart';
 import 'error_page_widget.dart';
+import 'favorites_drawer.dart';
+import 'show_actions.dart';
 import 'url_widget.dart';
 
 class BrowserPage extends StatefulWidget {
-  const BrowserPage({Key? key}) : super(key: key);
+  const BrowserPage({super.key});
 
   @override
   State createState() => _BrowserPageState();
@@ -43,13 +43,13 @@ class _BrowserPageState extends State<BrowserPage> {
           },
           onPageStarted: (String src) {
             setState(() {
-              webViewController.canGoForward().then((value) {
+              webViewController.canGoForward().then((bool value) {
                 _canGoForward = value;
               });
-              webViewController.canGoBack().then((value) {
+              webViewController.canGoBack().then((bool value) {
                 _canGoBack = value;
               });
-              webViewController.currentUrl().then((url) => textEditingController.text = url!);
+              webViewController.currentUrl().then((String? url) => textEditingController.text = url!);
             });
             Provider.of<PageStatusPage>(context, listen: false).setLoadingStatus(true);
             Provider.of<PageStatusPage>(context, listen: false).setErrorStatus(PageStatus.correct);
@@ -58,7 +58,7 @@ class _BrowserPageState extends State<BrowserPage> {
           onPageFinished: (String src) {
             setState(() {
               Provider.of<PageStatusPage>(context, listen: false).setLoadingStatus(false);
-              webViewController.currentUrl().then((url) => _currentUrl = url.toString());
+              webViewController.currentUrl().then((String? url) => _currentUrl = url.toString());
             });
           },
           onWebResourceError: (WebResourceError error) {
@@ -75,10 +75,18 @@ class _BrowserPageState extends State<BrowserPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> favoriteUrlsList = Provider.of<FavoritesState>(context).urls;
+    final List<String> favoriteUrlsList = Provider.of<FavoritesState>(context).urls;
     return Scaffold(
       appBar: AppBar(
-        actions: showActions(favoriteUrlsList, context),
+        actions: showActions(
+            webViewController: webViewController,
+            textEditingController: textEditingController,
+            canGoBack: _canGoBack,
+            canGoForward: _canGoForward,
+            context: context,
+            currentUrl: _currentUrl,
+            favoriteUrlsList: favoriteUrlsList,
+            homeUrl: _homeUrl),
       ),
       drawer: FavoritesDrawer(
           webViewController: webViewController,
@@ -99,58 +107,16 @@ class _BrowserPageState extends State<BrowserPage> {
             height: 72,
             child: UrlWidget(textEditingController: textEditingController, webViewController: webViewController),
           ),
-          // Provider.of<PageStatusPage>(context).status == PageStatus.error
-          //     ?
-          _error?.errorType != null && _error?.errorCode != null
-              ? Expanded(
-                  child: ErrorPageWidget(
-                    error: _error,
-                  ),
-                )
-              : Expanded(child: WebViewWidget(controller: webViewController)),
+          if (_error?.errorType != null && _error?.errorCode != null)
+            Expanded(
+              child: ErrorPageWidget(
+                error: _error,
+              ),
+            )
+          else
+            Expanded(child: WebViewWidget(controller: webViewController)),
         ]),
       ),
     );
-  }
-
-  List<Widget> showActions(List<String> favoriteUrlsList, BuildContext context) {
-    return [
-      IconButton(
-          onPressed: _canGoBack ? () => webViewController.goBack() : null,
-          icon: const Icon(Icons.arrow_back),
-          disabledColor: Colors.green),
-      IconButton(
-          onPressed: _canGoForward ? () => webViewController.goForward() : null,
-          icon: const Icon(Icons.arrow_forward),
-          disabledColor: Colors.green),
-      IconButton(
-        onPressed: () {
-          if (favoriteUrlsList.contains(_currentUrl)) {
-            Provider.of<FavoritesState>(context, listen: false).removeUrl(_currentUrl);
-          } else {
-            Provider.of<FavoritesState>(context, listen: false).addUrl(_currentUrl);
-          }
-        },
-        icon: const Icon(Icons.star),
-        color: Provider.of<FavoritesState>(context).urls.contains(_currentUrl) ? Colors.amber : Colors.white,
-      ),
-      IconButton(
-          onPressed: () {
-            webViewController.loadRequest(Uri.parse(_homeUrl));
-          },
-          icon: const Icon(Icons.home),
-          disabledColor: Colors.green),
-      IconButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    HistoryPage(textEditingController: textEditingController, webViewController: webViewController),
-              ),
-            );
-          },
-          icon: const Icon(Icons.history),
-          disabledColor: Colors.green),
-    ];
   }
 }

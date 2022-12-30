@@ -7,13 +7,13 @@ class UrlHistoryState extends ChangeNotifier {
 
   void addUrl(String url) {
     if (url.isNotEmpty) {
-      _urls = [url, ..._urls];
+      _urls = <String>[url, ..._urls];
     }
     notifyListeners();
   }
 
   void removeUrl(String url) {
-    _urls.removeWhere((element) => element == url);
+    _urls.removeWhere((String element) => element == url);
     notifyListeners();
   }
 
